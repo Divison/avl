@@ -7,24 +7,35 @@
 int _tmain(int argc, _TCHAR* argv[])
 {
 	int i = 8;
-	int j = 15;
+	int j = 35;
 	int k = 7;
-	int q = 9;
-	int w = 10;
+	int q = 25;
+	int w = 4;
 	int e = 14;
 	int r = 12;
 	int t = 13;
+	int d = 15;
 	cTree<int> tree(i);
-	tree(r); cout << endl;
-	tree.print_preorder();
-	tree(k); cout << endl;
-	tree.print_preorder();
-	tree(t); cout << endl;
+	//tree(q); cout << endl;
+	//tree.print_preorder();
+	tree(w); cout << endl;
 	tree.print_preorder();
 	tree(e); cout << endl;
 	tree.print_preorder();
-tree(j); cout << endl;
+	tree(r); cout << endl;
 	tree.print_preorder();
+	tree(d); cout << endl;
+	tree.print_preorder();
+	tree(q); cout << endl;
+	tree.print_preorder();
+	tree(j); cout << endl;
+	tree.print_preorder();
+	tree.Delete(e); cout << endl;
+	tree.print_preorder();
+	tree.Find(4);
+	
+/*tree(j); cout << endl;
+	tree.print_preorder();*/
 		
 	
 	

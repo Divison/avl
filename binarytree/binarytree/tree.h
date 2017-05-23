@@ -87,52 +87,123 @@ public:
 
 	Node* rotateright(Node* p) // правый поворот вокруг p
 	{
-		Node* q = p->GetLeft();
-		p->SetLeft( q->GetRight());
-		q->SetRight(p);
+		Node* q = new Node(p->Getkey());
+		q->SetRight(p->GetRight());
+		p->SetRight(q);
+		q->Setheight(Getheight(p));
+		q->SetLeft(p->GetLeft()->GetRight());
+
+		p->Setkey(p->GetLeft()->Getkey());
+		p->Setheight(Getheight(p->GetLeft()));
+
+		p->SetLeft(p->GetLeft()->GetLeft());
 		fixheight(p);
+
 		fixheight(q);
-		return q;
+		return p;
 	}
 
 	Node* rotateleft(Node* q) // левый поворот вокруг q
 	{
-		Node* p = q->GetRight();
-		q->SetRight( p->GetLeft());
-		p->SetLeft(q);
+	
+		
+
+		Node* p = new Node(q->Getkey());
+		p->SetLeft(q->GetLeft());
+		q->SetLeft(p);
+		p->Setheight(Getheight(q));
+		p->SetRight(q->GetRight()->GetLeft());
+
+		q->Setkey(q->GetRight()->Getkey());
+		q->Setheight(Getheight(q->GetRight()));
+	
+		q->SetRight(q->GetRight()->GetRight());
+				
 		fixheight(q);
+		
 		fixheight(p);
 		cout << endl;
-	//	preorder(p);
-
-		return p;
+		return q;
+	
 	
 	}
 
 	Node* balance(Node* p) // балансировка узла p
 	{
 		fixheight(p);
+		
 		if (bfactor(p) == 2)
 		{
+			cout <<
+				"balanc\n";
 			if (bfactor(p->GetRight()) < 0)
 				p->SetRight(rotateright(p->GetRight()));
-		//	cout << "----" << endl;
-		//	preorder(p); cout << endl;
-		p = rotateleft(p);
-		//	cout << " --" << endl;
-			
-		//	preorder(p);
-		//	cout << endl << "  -- " << endl;
+	
+		 rotateleft(p);
+		return p;
+		
 		}
 		if (bfactor(p) == -2)
 		{
+			cout <<
+				"balanc\n";
 			if (bfactor(p->GetLeft()) > 0)
 				p->SetLeft( rotateleft(p->GetLeft()));
-			return rotateright(p);
+			rotateright(p);
+			return p;
 		}
 		return p; // балансировка не нужна
 	}
 
+	Node* findmin(Node* p) // поиск узла с минимальным ключом в дереве p 
+	{
+		return p->GetLeft() ? findmin(p->GetLeft()) : p;
+	}
+
+	Node* removemin(Node* p) // удаление узла с минимальным ключом из дерева p
+	{
+		if (p->GetLeft() == 0)
+			return p->GetRight();
+		p->SetLeft( removemin(p->GetLeft()));
+		return balance(p);
+	}
+
+	Node* remove(Node* p, mySort &k) // удаление ключа k из дерева p
+	{
+		if (!p) return 0;
+		if (k < p->Getkey())
+			p->SetLeft( remove(p->GetLeft(), k));
+		else if (k > p->Getkey())
+			p->SetRight(remove(p->GetRight(), k));
+		else //  k == p->key 
+		{
+			Node* q = p->GetLeft();
+			Node* r = p->GetRight();
+			delete p;
+			if (!r) return q;
+			Node* min = findmin(r);
+			min->SetRight(removemin(r));
+			min->SetLeft(q);
+			return balance(min);
+		}
+		return balance(p);
+	}
+
+	Node* elFind(Node* n, mySort value) {
+		if (n == NULL || n->Getkey() == value) {
+			if (n == NULL) return 0;
+			cout << endl << "element   " << n->Getkey() << endl;
+			return n;
+
+		}
+		else if (value < n->Getkey()) {
+			return elFind(n->GetLeft(), value);
+		}
+		else if (value > n->Getkey()) {
+			return elFind(n->GetRight(), value);
+		}
+		
+	}
 };
 
 
@@ -143,18 +214,18 @@ class cTree : public Node<mySort> {
 public:
 
 	cTree(mySort &key) : Node(key) {};
-	//////////////
+	//////////////////////
 	void print_preorder();
-	/////////////
+	void Find(mySort);
+	void Delete(mySort&);
+	/////////////////////
 
 
 	void operator()( mySort &k) 
 	{	
 		Node* root = Get();
-	root=insert(root, k);
-	cout << "koreshok" << endl;
-	preorder(root);
-	cout << "----";
+		insert(root, k);
+		
 
 	}
 
@@ -179,4 +250,20 @@ void cTree<mySort>::print_preorder()
 	Node* _root = Get();
 
 	preorder(_root);
+};
+
+template <class mySort>
+void cTree<mySort>::Delete(mySort &k)
+{
+	Node* _root = Get();
+
+	remove(_root,k);
+};
+
+template <class mySort>
+void cTree<mySort>::Find(mySort k)
+{
+	Node* _root = Get();
+
+	elFind(_root, k);
 };
